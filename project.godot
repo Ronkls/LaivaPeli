@@ -10,7 +10,8 @@ config_version=5
 
 [application]
 
-config/name="Ships"
+config/name="LaivaPeli"
+run/main_scene="uid://cb74t5euos61n"
 config/features=PackedStringArray("4.7", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
