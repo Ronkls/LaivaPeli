@@ -11,16 +11,16 @@ Here are some terrain types and their cost values that I came up with.
 ```csharp
 public enum TerrainType
 {
-    None = 0, // No terrain type has been assigned.
-    CalmWater = 1, // Just your basic water. Has the lowest point cost.
-    SlowCurrent = 2,
-    RoughWater = 3,
-    StrongCurrent = 4,
-    Whirlpool = 10,
-    Rocks = -1,
-    WreckedShip = -1,
-    Island = -1,
-    Land = -1,
+	None = 0, // No terrain type has been assigned.
+	CalmWater = 1, // Just your basic water. Has the lowest point cost.
+	SlowCurrent = 2,
+	RoughWater = 3,
+	StrongCurrent = 4,
+	Whirlpool = 10,
+	Rocks = -1,
+	WreckedShip = -1,
+	Island = -1,
+	Land = -1,
 }
 ```
 
@@ -60,40 +60,40 @@ Can be used from the cell's position to detect what terrain is directly undernea
 
 Here is what a pseudocode of my implementation would look like.
 
-    When the NavigationGrid is ready:
-        Build the grid
+	When the NavigationGrid is ready:
+		Build the grid
 
-        For each cell in the grid:
-            Determine the cell's world position
+		For each cell in the grid:
+			Determine the cell's world position
 
-            Find all Area3D nodes that overlap the cell's position
+			Find all Area3D nodes that overlap the cell's position
 
-            Use a raycast to check the terrain directly underneath the cell
+			Use a raycast to check the terrain directly underneath the cell
 
-            Create a list of all detected TerrainTypes
+			Create a list of all detected TerrainTypes
 
-            If the list contains any non-navigable terrain:
-                Set the cell's cost to -1
+			If the list contains any non-navigable terrain:
+				Set the cell's cost to -1
 
             Else:
                 Find the TerrainType with the highest cost
 
-                Set the cell's cost to that TerrainType's cost
+				Set the cell's cost to that TerrainType's cost
 
             Store the cell in the grid
 
 
     To detect terrain using an Area3D:
-        Check which Area3D nodes contain the cell's world position
+		Check which Area3D nodes contain the cell's world position
 
-        For each detected Area3D:
-            Get its TerrainType
+		For each detected Area3D:
+			Get its TerrainType
 
-            Add the TerrainType to the list of detected terrain
+			Add the TerrainType to the list of detected terrain
 
 
-    To detect terrain using a raycast:
-        Start the raycast at the cell's world position
+	To detect terrain using a raycast:
+		Start the raycast at the cell's world position
 
         Cast the ray downwards
 
@@ -113,6 +113,6 @@ Here is what a pseudocode of my implementation would look like.
 
             For each detected TerrainType:
                 If its cost is higher than the current cost:
-                    Set the current cost to that TerrainType's cost
+					Set the current cost to that TerrainType's cost
 
-            Return the current cost
+			Return the current cost

@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://xvjxyh84ak0j"]
+
+[ext_resource type="Script" uid="uid://cudiapth04xp8" path="res://Code/Pathfinding/NavigationObject.cs" id="1_4yflg"]
+
+[node name="NavigationObject" type="Node3D" unique_id=184553325]
+script = ExtResource("1_4yflg")
