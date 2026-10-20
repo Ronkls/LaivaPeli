@@ -25,12 +25,12 @@ namespace GA.Collections
 
 		public static void Reverse<T>(this IList<T> list)
 		{
-			if(list == null)
+			if (list == null)
 			{
-				throw new System.ArgumentException(nameof(list));
+				throw new System.ArgumentNullException(nameof(list));
 			}
 
-			for (int i = 0; i < list.Count / 2; i++)
+			for (int i = 0; i < list.Count / 2; ++i)
 			{
 				int startIndex = i;
 				int endIndex = list.Count - 1 - i;
