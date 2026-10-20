@@ -463,6 +463,8 @@ transform = Transform3D(1, 0, 0, 0, -0.11524884, 0.9933367, 0, -0.9933367, -0.11
 [node name="DistanceTest" type="Node3D" parent="." unique_id=2140708446]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.031498, 0, 3.2909489)
 script = ExtResource("12_rpty4")
+_distance = 25
+_includeDiagonals = true
 
 [node name="Shallow1" type="Area3D" parent="." unique_id=1692232102]
 

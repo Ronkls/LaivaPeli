@@ -93,49 +93,83 @@ namespace GA.Ships.Pathfinding
 			return null;
 		}
 
-		public IList<Cell> GetReachableCells(Cell start, int maxSteps, bool includeDiagonal)
+		/// <summary>
+		/// Finds all walkable cells that can be reached within the given movement point budget.
+		/// </summary>
+		/// <param name="start">The cell to start from.</param>
+		/// <param name="maxMovementPoints">The maximum movement points available.</param>
+		/// <param name="useDiagonals">Whether diagonal movement is allowed.</param>
+		/// <returns>All reachable cells excluding the starting cell.</returns>
+		public IList<Cell> GetReachableCells(Cell start, int maxMovementPoints, bool includeDiagonal)
 		{
-			Queue<Cell> frontier = new Queue<Cell>();
-			Dictionary<Cell, (Cell, int)> cameFrom = new Dictionary<Cell, (Cell, int)>();
+			if (start == null)
+			{
+				throw new ArgumentNullException(nameof(start));
+			}
 
-			frontier.Enqueue(start);
-			cameFrom[start] = (null, 0);
+			if (!start.IsWalkable)
+			{
+				throw new ArgumentException("Start cell must be walkable.", nameof(start));
+			}
 
-			bool isEndReached = false;
+			if (maxMovementPoints < 0)
+			{
+				throw new ArgumentOutOfRangeException(nameof(maxMovementPoints));
+			}
+
+			PriorityQueue<FrontierEntry> frontier = new PriorityQueue<FrontierEntry>();
+			Dictionary<Cell, int> costs = new Dictionary<Cell, int>();
+
+			frontier.Enqueue(new FrontierEntry(start, 0));
+			costs[start] = 0;
 
 			while (frontier.Count > 0)
 			{
-				Cell current = frontier.Dequeue();
-				int distance = cameFrom[current].Item2;
+				FrontierEntry entry = frontier.Dequeue();
+				Cell current = entry.Cell;
 
-				isEndReached = distance >= maxSteps;
-				if (isEndReached)
+				// Skip outdated entries if a cheaper route was found later.
+				if (entry.TotalCost != costs[current])
 				{
-					// Max. distance is reached. Path is complete.
-					break;
+					continue;
 				}
 
+				// Get current cell's all walkable neighbouring cells.
 				IList<Cell> neighbours = _grid.GetNeighbours(current, includeDiagonal: includeDiagonal);
+
 				foreach (Cell neighbour in neighbours)
 				{
-					if (neighbour.IsWalkable && !cameFrom.ContainsKey(neighbour))
+					// Moving into a cell costs that cell's Cost.
+					if (!neighbour.IsWalkable || neighbour.Cost > maxMovementPoints - entry.TotalCost)
 					{
-						frontier.Enqueue(neighbour);
-						cameFrom[neighbour] = (current, distance + 1);
+						continue;
 					}
+
+					int newCost = entry.TotalCost + neighbour.Cost;
+
+					// Skip this route if we already know a cheaper or equal route.
+					if (costs.TryGetValue(neighbour, out int previousCost) && previousCost <= newCost)
+					{
+						continue;
+					}
+
+					// Store the cheaper route and then add it to the frontier PriorityQueue.
+					costs[neighbour] = newCost;
+					frontier.Enqueue(new FrontierEntry(neighbour, newCost));
 				}
 			}
 
-			HashSet<Cell> validCells = new HashSet<Cell>();
-			foreach (var kvp in cameFrom)
+			HashSet<Cell> reachableCells = new HashSet<Cell>();
+
+			foreach (KeyValuePair<Cell, int> entry in costs)
 			{
-				if (kvp.Key != start)
+				if (entry.Key != start && entry.Value <= maxMovementPoints)
 				{
-					validCells.Add(kvp.Key);
+					reachableCells.Add(entry.Key);
 				}
 			}
 
-			return validCells.ToList();
+			return reachableCells.ToList();
 		}
 
 		private IList<Vector3> ConstructPath(Cell startCell, Cell endCell, Dictionary<Cell, Cell> cameFrom)
